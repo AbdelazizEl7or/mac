@@ -2,7 +2,7 @@ name: Build iOS App
 
 on:
   push:
-    branches:
+    branches:v2
       - main
   workflow_dispatch:
 
@@ -30,7 +30,7 @@ jobs:
         xcodebuild -exportArchive -archivePath ${{github.workspace}}/build/Starfish.xcarchive -exportPath ${{github.workspace}}/build/export -exportOptionsPlist ExportOptions.plist
 
     - name: Upload built .ipa
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2
       with:
         name: starfish-ipa
         path: build/export/*.ipa
