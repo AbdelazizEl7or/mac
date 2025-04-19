@@ -1,8 +1,9 @@
-name: Build iOS App
+name: Build iOS App (No Signing)
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -10,7 +11,7 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout project
       uses: actions/checkout@v3
 
     - name: Set up Ruby (for CocoaPods)
@@ -18,17 +19,28 @@ jobs:
       with:
         ruby-version: '3.1'
 
-    - name: Install CocoaPods
+    - name: Install dependencies (CocoaPods)
       run: |
         sudo gem install cocoapods || true
         pod install || true
 
-    - name: Build app
+    - name: Build archive (no signing)
       run: |
-        xcodebuild -project Starfish.xcodeproj -scheme Starfish -sdk iphoneos -configuration Release archive -archivePath ${{github.workspace}}/build/Starfish.xcarchive
-        xcodebuild -exportArchive -archivePath ${{github.workspace}}/build/Starfish.xcarchive -exportPath ${{github.workspace}}/build/export -exportOptionsPlist ExportOptions.plist
+        xcodebuild -project Starfish.xcodeproj \
+          -scheme Starfish \
+          -sdk iphoneos \
+          -configuration Release \
+          CODE_SIGNING_ALLOWED=NO \
+          archive -archivePath build/Starfish.xcarchive
 
-    - name: Upload IPA artifact
+    - name: Export IPA
+      run: |
+        xcodebuild -exportArchive \
+          -archivePath build/Starfish.xcarchive \
+          -exportOptionsPlist ExportOptions.plist \
+          -exportPath build/export
+
+    - name: Upload IPA
       uses: actions/upload-artifact@v4
       with:
         name: starfish-ipa
