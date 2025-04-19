@@ -38,7 +38,7 @@ jobs:
       run: |
         xcodebuild -exportArchive \
           -archivePath build/Starfish.xcarchive \
-          -exportOptionsPlist ExportOptions.plist \
+          -exportOptionsPlist Starfish/ExportOptions.plist \
           -exportPath build/export
 
     - name: Upload IPA
