@@ -24,6 +24,11 @@ jobs:
         sudo gem install cocoapods || true
         pod install || true
 
+    - name: Install Pod Dependencies
+      run: |
+        cd Starfish
+        pod install
+
     - name: Build archive (no signing)
       run: |
         xcodebuild -project Starfish.xcodeproj \
