@@ -29,7 +29,7 @@ jobs:
         xcodebuild -exportArchive -archivePath ${{github.workspace}}/build/Starfish.xcarchive -exportPath ${{github.workspace}}/build/export -exportOptionsPlist ExportOptions.plist
 
     - name: Upload IPA artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: starfish-ipa
         path: build/export/*.ipa
