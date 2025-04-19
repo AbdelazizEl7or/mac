@@ -1,0 +1,36 @@
+name: Build iOS App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout project
+      uses: actions/checkout@v3
+
+    - name: Set up Ruby (for CocoaPods if needed)
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.1'
+
+    - name: Install dependencies
+      run: |
+        sudo gem install cocoapods || true
+        pod install || true
+
+    - name: Build .ipa using xcodebuild
+      run: |
+        xcodebuild -workspace Starfish.xcworkspace -scheme Starfish -sdk iphoneos -configuration Release archive -archivePath ${{github.workspace}}/build/Starfish.xcarchive
+        xcodebuild -exportArchive -archivePath ${{github.workspace}}/build/Starfish.xcarchive -exportPath ${{github.workspace}}/build/export -exportOptionsPlist ExportOptions.plist
+
+    - name: Upload built .ipa
+      uses: actions/upload-artifact@v3
+      with:
+        name: starfish-ipa
+        path: build/export/*.ipa
